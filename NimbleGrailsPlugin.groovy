@@ -14,7 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
- 
+
 import grails.util.GrailsUtil
 import org.codehaus.groovy.grails.commons.GrailsApplication
 import org.springframework.mail.javamail.JavaMailSenderImpl
@@ -33,10 +33,10 @@ class NimbleGrailsPlugin {
     def grailsVersion = "1.1 > *"
 
     // the other plugins this plugin depends on
-    def dependsOn = [ shiro: "1.0.1",
-        mail: "0.6 > *",
+    def dependsOn = [ shiro: "1.1.3",
+        mail: "1.0-SNAPSHOT",
     ]
-    
+
     // resources that are excluded from plugin packaging
     def pluginExcludes = [
                       'grails-app/conf/NimbleConfig.groovy',
@@ -69,7 +69,7 @@ class NimbleGrailsPlugin {
          * recreate any objects from dependent plugins who previously had
          * no config
          */
-       
+
         // Redefine mailSender
         def mailConfig = application.config.nimble.messaging.mail
         mailSender(JavaMailSenderImpl) {
@@ -102,7 +102,7 @@ class NimbleGrailsPlugin {
 		application.filtersClasses.each { filter ->
 			// Should be used after verified call to 'accessControl'
 			log.debug("Injecting Nimble methods to Filter ${filter}")
-			injectAuthn(filter, application)			
+			injectAuthn(filter, application)
 		}
 
         // Supply functionality to controllers
@@ -123,7 +123,7 @@ class NimbleGrailsPlugin {
     }
 
     def onConfigChange = { event ->
-        
+
     }
 
     private void injectAuthn(def clazz, def application) {
@@ -131,9 +131,9 @@ class NimbleGrailsPlugin {
         	def subject = SecurityUtils.getSubject()
         }
         clazz.metaClass.getAuthenticatedUser = {
-        	def principal = SecurityUtils.getSubject()?.getPrincipal()		
+        	def principal = SecurityUtils.getSubject()?.getPrincipal()
 			def authUser
-			
+
             if(application.config?.nimble?.implementation?.user)
     			authUser = grailsApplication.classLoader.loadClass(application.config.nimble.implementation.user).get(principal)
     		else
